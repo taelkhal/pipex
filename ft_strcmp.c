@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/10 18:31:05 by taelkhal          #+#    #+#             */
-/*   Updated: 2023/02/10 18:32:17 by taelkhal         ###   ########.fr       */
+/*   Created: 2023/02/05 18:03:54 by taelkhal          #+#    #+#             */
+/*   Updated: 2023/02/05 18:04:37 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-size_t	ft_strlen(char *str)
+int	ft_strcmp(const *s1, const *s2)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
-	while (str[i])
+	while (s1[i] || s2[i])
+	{
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
 		i++;
-	return (i);
+	}
+	return (0);
 }

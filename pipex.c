@@ -3,97 +3,92 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmokane <mmokane@student.42.fr>            +#+  +:+       +#+        */
+/*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/04 20:27:26 by mmokane           #+#    #+#             */
-/*   Updated: 2023/01/21 16:32:37 by mmokane          ###   ########.fr       */
+/*   Created: 2023/02/10 14:34:35 by taelkhal          #+#    #+#             */
+/*   Updated: 2023/02/12 17:00:09 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	child(char *argv[], char **env, int fd[], char **command)
+void    run_cmd(char *av, char **env, char **cmd)
 {
-	int	infile;
+    int     i;
+    char	*path;
 
-	infile = open(argv[1], O_RDONLY);
-	if (infile == -1)
+	i = 0;
+	if (!av)
+		exit (1);
+	cmd = ft_split(av, ' ');
+	path = check_path_env(cmd[0], env);
+	if (!path)
 	{
-		write(2, argv[1], ft_strlen(argv[1]));
-		write(2, " : Infile error\n", 17);
+		while (cmd[i++])
+			free(cmd[i]);
+		free(cmd);
+	}
+	if (execve(path, cmd, env) == -1)
+	{
+		ft_putstr(RED"ERROR, COMMAND NOT FOUND\n", 2);
+		exit (1);
+	}
+}
+
+void    child_process(char **av, char **env, int fd[], char **cmd)
+{
+	int	input_fd;
+
+	input_fd = open(av[1], O_RDONLY);
+	if (input_fd == -1)
+	{
+		ft_putstr(RED"ERROR, CAN'T OPEN THIS FILE\n", 2);
 		exit (1);
 	}
 	dup2(fd[1], 1);
-	dup2(infile, 0);
+	dup2(input_fd, 0);
 	close(fd[0]);
-	launch(argv[2], env, command);
+	run_cmd(av[2], env, cmd);
 }
 
-void	parent(char *argv[], char **env, int fd[], char **command)
+void	parent_process(char **av, char **env, int fd[], char **cmd)
 {
-	int	outfile;
+	int	output_fd;
 
-	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (outfile == -1)
+	output_fd = open(av[4], O_RDONLY | O_WRONLY | O_CREAT);
+	if (output_fd == -1)
 	{
-		write (2, argv[4], ft_strlen(argv[4]));
-		write (2, "Outfile error\n", 15);
-		exit(1);
+		ft_putstr(RED"ERROR, CAN'T OPEN THIS FILE\n", 2);
+		exit (1);
 	}
 	dup2(fd[0], 0);
-	dup2(outfile, 1);
-	close(fd[1]);
-	launch(argv[3], env, command);
+	dup2(output_fd, 1);
+	close (fd[1]);
+	run_cmd(av[3], env, cmd);
 }
 
-int	main(int argc, char *argv[], char **env)
+int main(int ac, char **av, char **env)
 {
+	pid_t id;
 	int		fd[2];
-	pid_t	id;
-	char	**command;
+	char **cmd;
 
-	if (argc != 5)
-	{
-		write (2, "Invalid number of arguments\n", 29);
-		exit(1);
-	}
-	else
+	cmd = NULL;
+	if (ac == 5)
 	{
 		if (pipe(fd) == -1)
 		{
-			write (2, "An error has occured with opening the pipe\n", 44);
+			ft_putstr(RED"ERROR, CAN'T OPEN PIPE\n", 2);
 			exit (1);
 		}
 		id = fork();
 		if (id == -1)
 			exit (1);
 		if (id == 0)
-			child (argv, env, fd, command);
-		waitpid (id, NULL, 0);
-		parent (argv, env, fd, command);
+			child_process(av, env, fd, cmd);
+		waitpid(id, NULL, 0);
+		parent_process(av, env, fd, cmd);
 	}
+	ft_putstr(RED"ERROR, INVALID ARGUMENTS NUMBERS\n", 2);
 	return (0);
-}
-
-void	launch(char *argv, char **env, char **command)
-{
-	int		i;
-	char	*path;
-
-	if (!argv)
-		exit (1);
-	command = ft_split(argv, ' ');
-	path = check_for_path(command[0], env);
-	if (!path)
-	{
-		while (command[i++])
-			free(command[i]);
-		free(command);
-	}
-	if (execve(path, command, env) == -1)
-	{
-		write (2, argv, ft_strlen(argv));
-		write (2, " : Command not found\n", 22);
-		exit(1);
-	}
 }

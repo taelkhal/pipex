@@ -3,32 +3,29 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mmokane <mmokane@student.42.fr>            +#+  +:+       +#+         #
+#    By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/12/31 17:14:15 by mmokane           #+#    #+#              #
-#    Updated: 2023/01/15 00:55:01 by mmokane          ###   ########.fr        #
+#    Created: 2023/02/03 17:16:17 by taelkhal          #+#    #+#              #
+#    Updated: 2023/02/12 14:47:54 by taelkhal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
-
-CFlAGS = -Wall -Wextra -Werror
-
-SRCS = ft_split.c ft_strjoin.c ft_strstr.c ft_strlen.c pipex.c check_the_path.c
+CC = cc
+FLAGS = -Wall -Wextra -Werror -fsanitize=address
+SRCS = ft_putstr.c ft_split.c ft_strjoin.c pipex.c check_path_env.c ft_strlen.c \
+		ft_strstr.c
 
 OBJS = $(SRCS:.c=.o)
 
-CC = gcc
-
-$(NAME) : $(OBJS)
-				cc $(CFlAGS) $(OBJS) -o $(NAME)
-				
 all : $(NAME)
 
+$(NAME) : $(OBJS)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
 clean :
-				rm -fr $(OBJS)
-		
-fclean : clean	
-				rm -fr $(NAME)
-				
+	rm -f $(OBJS)
+
+fclean : clean
+	rm -rf $(NAME)
+
 re : fclean all

@@ -3,90 +3,99 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmokane <mmokane@student.42.fr>            +#+  +:+       +#+        */
+/*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/07 09:12:07 by mmokane           #+#    #+#             */
-/*   Updated: 2023/01/10 02:06:40 by mmokane          ###   ########.fr       */
+/*   Created: 2023/02/04 16:01:27 by taelkhal          #+#    #+#             */
+/*   Updated: 2023/02/04 16:04:22 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	w_c(char const *s, char c)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-			i++;
-		else
-		{
-			count++;
-			while (s[i] && s[i] != c)
-				i++;
-		}
-	}
-	return (count);
-}
-
-char	*w_m(char *klma, char const *s, int j, int word_len)
-{
-	int	i;
-
-	i = 0;
-	while (word_len > 0)
-	{
-		klma[i++] = s[j - word_len];
-		word_len--;
-	}
-	klma[i] = '\0';
-	return (klma);
-}
-
-char	**words_len(char **result, char const *s, char c, int word_num)
+int	ft_total_words(char const *str, char c)
 {
 	int	i;
 	int	j;
-	int	word_len;
 
 	i = 0;
 	j = 0;
-	word_len = 0;
-	while (s[j] && i < word_num)
-	{	
-		while (s[j] && s[j] == c)
-			j++;
-		while (s[j] && s[j] != c)
+	while (str[i])
+	{
+		if (str[i] == c)
+			i++;
+		else
 		{
 			j++;
-			word_len++;
+			while (str[i] && str[i] != c)
+				i++;
 		}
-		result[i] = malloc(sizeof(char) * (word_len + 1));
-		if (!result[i])
-			return (NULL);
-		w_m(result[i], s, j, word_len);
-		word_len = 0;
+	}
+	return (j);
+}
+
+int	ft_len_word(char const *str, char c)
+{
+	int	i;
+	int	j;
+
+	j = 0;
+	i = 0;
+	while (str[i] && str[i] == c)
+		i++;
+	while (str[i] && str[i] != c)
+	{
+		if (str[i] != c)
+			j++;
 		i++;
 	}
-	result[i] = 0;
-	return (result);
+	return (j);
+}
+
+char	*ft_add_words(const char *str, char c)
+{
+	char	*s;
+	int		i;
+	int		len;
+
+	i = 0;
+	len = ft_len_word(str, c);
+	s = malloc(sizeof(char) * (len + 1));
+	if (!s)
+		return (NULL);
+	while (str[i] && str[i] != c && len > 0)
+	{
+		s[i] = str[i];
+		i++;
+		len--;
+	}
+	s[i] = '\0';
+	return (s);
 }
 
 char	**ft_split(char const *s, char c)
 {
-	int		word_num;
-	char	**result;
+	char	**str;
+	int		i;
+	int		j;
 
-	if (s == 0)
+	i = 0;
+	j = 0;
+	if (!s)
 		return (NULL);
-	word_num = w_c(s, c);
-	result = malloc(sizeof(char *) * (word_num + 1));
-	if (!result)
+	str = malloc(sizeof(char *) * (ft_total_words(s, c) + 1));
+	if (!str)
 		return (NULL);
-	words_len(result, s, c, word_num);
-	return (result);
+	while (s[i])
+	{
+		while (s[i] && s[i] == c)
+			i++;
+		if (s[i] && s[i] != c)
+		{
+			str[j] = ft_add_words(&s[i], c);
+			i = i + ft_len_word(&s[i], c);
+			j++;
+		}
+	}
+	str[j] = 0;
+	return (str);
 }

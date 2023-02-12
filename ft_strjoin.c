@@ -3,35 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmokane <mmokane@student.42.fr>            +#+  +:+       +#+        */
+/*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/07 23:56:39 by mmokane           #+#    #+#             */
-/*   Updated: 2023/01/10 04:03:43 by mmokane          ###   ########.fr       */
+/*   Created: 2023/02/04 16:05:15 by taelkhal          #+#    #+#             */
+/*   Updated: 2023/02/12 14:48:42 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	char	*resulttab;
-	size_t	size;
-	size_t	i;
-	size_t	j;
+	int		i;
+	int		j;
+	char	*newstr;
 
-	if (!s1 || !s2)
-		return (NULL);
-	size = ft_strlen(s1) + ft_strlen(s2);
-	resulttab = malloc(sizeof(char) * (size + 1));
-	if (!resulttab)
-		return (NULL);
 	i = 0;
-	j = 0;
-	while (s1[j])
-		resulttab[i++] = s1[j++];
-	j = 0;
+	if (!s1 || !s2)
+		return (0);
+	newstr = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!newstr)
+		return (NULL);
+	while (s1[i])
+	{
+		newstr[i] = s1[i];
+		i++;
+	}
+	j = 0 ;
 	while (s2[j])
-		resulttab[i++] = s2[j++];
-	resulttab[i] = '\0';
-	return (resulttab);
+	{
+		newstr[i] = s2[j];
+		i++;
+		j++;
+	}
+	newstr[i] = '\0';
+	// free(s1);
+	return (newstr);
 }
