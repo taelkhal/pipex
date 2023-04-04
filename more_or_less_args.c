@@ -1,27 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr.c                                        :+:      :+:    :+:   */
+/*   more_or_less_args.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/04 15:56:58 by taelkhal          #+#    #+#             */
-/*   Updated: 2023/02/26 21:03:19 by taelkhal         ###   ########.fr       */
+/*   Created: 2023/02/15 18:02:39 by taelkhal          #+#    #+#             */
+/*   Updated: 2023/02/26 21:01:16 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_putstr(char *str, int fd)
+void	more_or_less_args(void)
 {
-	int	i;
-
-	i = 0;
-	if (!str || fd < 0)
-		return ;
-	while (str[i])
-	{
-		write (fd, &str[i], 1);
-		i++;
-	}
+	ft_putstr(RED"ERROR, INVALID ARGUMENTS NUMBERS\n", 2);
+	exit(1);
 }

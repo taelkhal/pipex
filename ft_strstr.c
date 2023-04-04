@@ -6,7 +6,7 @@
 /*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/11 15:24:25 by taelkhal          #+#    #+#             */
-/*   Updated: 2023/02/11 15:24:44 by taelkhal         ###   ########.fr       */
+/*   Updated: 2023/02/24 13:22:54 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@ char	*ft_strstr(char *str, char *to_find)
 	while (str[i] != '\0')
 	{
 		j = 0;
-		while (str[i + j] != '\0' && str[i + j] == to_find[j])
+		while (str[i + j] == to_find[j])
 		{
 			if (to_find[j + 1] == '\0')
 				return (&str[i]);
-			++j;
+			j++;
 		}
-		++i;
+		i++;
 	}
 	return (0);
 }

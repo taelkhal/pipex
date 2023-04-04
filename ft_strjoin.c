@@ -6,7 +6,7 @@
 /*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/04 16:05:15 by taelkhal          #+#    #+#             */
-/*   Updated: 2023/02/12 14:48:42 by taelkhal         ###   ########.fr       */
+/*   Updated: 2023/02/15 17:41:54 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,5 @@ char	*ft_strjoin(char *s1, char *s2)
 		j++;
 	}
 	newstr[i] = '\0';
-	// free(s1);
 	return (newstr);
 }

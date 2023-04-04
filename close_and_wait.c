@@ -1,27 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   close_and_wait.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/05 18:03:54 by taelkhal          #+#    #+#             */
-/*   Updated: 2023/02/05 18:04:37 by taelkhal         ###   ########.fr       */
+/*   Created: 2023/02/18 14:50:43 by taelkhal          #+#    #+#             */
+/*   Updated: 2023/02/18 15:00:02 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_strcmp(const *s1, const *s2)
+void	close_and_wait(int fd[], pid_t id1, pid_t id2)
 {
-	int	i;
-
-	i = 0;
-	while (s1[i] || s2[i])
-	{
-		if (s1[i] != s2[i])
-			return (s1[i] - s2[i]);
-		i++;
-	}
-	return (0);
+	close(fd[1]);
+	close(fd[0]);
+	waitpid(id1, NULL, 0);
+	waitpid(id2, NULL, 0);
 }

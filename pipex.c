@@ -6,16 +6,22 @@
 /*   By: taelkhal <taelkhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 14:34:35 by taelkhal          #+#    #+#             */
-/*   Updated: 2023/02/12 17:00:09 by taelkhal         ###   ########.fr       */
+/*   Updated: 2023/02/26 20:52:24 by taelkhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void    run_cmd(char *av, char **env, char **cmd)
+void	pipe_error_msg(void)
 {
-    int     i;
-    char	*path;
+	ft_putstr(RED"ERROR, CAN'T OPEN THE PIPE\n", 2);
+	exit (1);
+}
+
+void	run_cmd(char *av, char **env, char **cmd)
+{
+	int		i;
+	char	*path;
 
 	i = 0;
 	if (!av)
@@ -24,8 +30,8 @@ void    run_cmd(char *av, char **env, char **cmd)
 	path = check_path_env(cmd[0], env);
 	if (!path)
 	{
-		while (cmd[i++])
-			free(cmd[i]);
+		while (cmd[i])
+			free(cmd[i++]);
 		free(cmd);
 	}
 	if (execve(path, cmd, env) == -1)
@@ -35,14 +41,14 @@ void    run_cmd(char *av, char **env, char **cmd)
 	}
 }
 
-void    child_process(char **av, char **env, int fd[], char **cmd)
+void	child_process1(char **av, char **env, int fd[], char **cmd)
 {
 	int	input_fd;
 
 	input_fd = open(av[1], O_RDONLY);
 	if (input_fd == -1)
 	{
-		ft_putstr(RED"ERROR, CAN'T OPEN THIS FILE\n", 2);
+		perror(RED"ERROR ");
 		exit (1);
 	}
 	dup2(fd[1], 1);
@@ -51,14 +57,14 @@ void    child_process(char **av, char **env, int fd[], char **cmd)
 	run_cmd(av[2], env, cmd);
 }
 
-void	parent_process(char **av, char **env, int fd[], char **cmd)
+void	child_process2(char **av, char **env, int fd[], char **cmd)
 {
 	int	output_fd;
 
-	output_fd = open(av[4], O_RDONLY | O_WRONLY | O_CREAT);
+	output_fd = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (output_fd == -1)
 	{
-		ft_putstr(RED"ERROR, CAN'T OPEN THIS FILE\n", 2);
+		perror (RED"ERROR ");
 		exit (1);
 	}
 	dup2(fd[0], 0);
@@ -67,28 +73,30 @@ void	parent_process(char **av, char **env, int fd[], char **cmd)
 	run_cmd(av[3], env, cmd);
 }
 
-int main(int ac, char **av, char **env)
+int	main(int ac, char **av, char **env)
 {
-	pid_t id;
+	pid_t	id1;
+	pid_t	id2;
 	int		fd[2];
-	char **cmd;
+	char	**cmd;
 
-	cmd = NULL;
 	if (ac == 5)
 	{
 		if (pipe(fd) == -1)
-		{
-			ft_putstr(RED"ERROR, CAN'T OPEN PIPE\n", 2);
+			pipe_error_msg();
+		id1 = fork();
+		if (id1 == -1)
 			exit (1);
-		}
-		id = fork();
-		if (id == -1)
+		if (id1 == 0)
+			child_process1(av, env, fd, cmd);
+		id2 = fork();
+		if (id2 == -1)
 			exit (1);
-		if (id == 0)
-			child_process(av, env, fd, cmd);
-		waitpid(id, NULL, 0);
-		parent_process(av, env, fd, cmd);
+		if (id2 == 0)
+			child_process2(av, env, fd, cmd);
+		close_and_wait(fd, id1, id2);
 	}
-	ft_putstr(RED"ERROR, INVALID ARGUMENTS NUMBERS\n", 2);
+	else
+		more_or_less_args();
 	return (0);
 }
